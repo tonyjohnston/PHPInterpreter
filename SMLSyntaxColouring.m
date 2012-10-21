@@ -26,29 +26,29 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 @property (copy) NSString *functionDefinition;
 @property (copy) NSString *removeFromFunction;
-@property (retain) NSString *secondString;
-@property (retain) NSString *firstString;
-@property (retain) NSString *beginCommand;
-@property (retain) NSString *endCommand;
-@property (retain) NSSet *keywords;
-@property (retain) NSSet *autocompleteWords;
-@property (retain) NSArray *keywordsAndAutocompleteWords;
-@property (retain) NSString *beginInstruction;
-@property (retain) NSString *endInstruction;
-@property (retain) NSCharacterSet *beginVariable;
-@property (retain) NSCharacterSet *endVariable;
-@property (retain) NSString *firstSingleLineComment;
-@property (retain) NSString *secondSingleLineComment;
-@property (retain) NSMutableArray *singleLineComments;
-@property (retain) NSMutableArray *multiLineComments;
-@property (retain) NSString *beginFirstMultiLineComment;
-@property (retain) NSString*endFirstMultiLineComment;
-@property (retain) NSString*beginSecondMultiLineComment;
-@property (retain) NSString*endSecondMultiLineComment;
-@property (retain) NSCharacterSet *keywordStartCharacterSet;
-@property (retain) NSCharacterSet *keywordEndCharacterSet;
-@property (retain) NSCharacterSet *attributesCharacterSet;
-@property (retain) NSCharacterSet *letterCharacterSet;
+@property (strong) NSString *secondString;
+@property (strong) NSString *firstString;
+@property (strong) NSString *beginCommand;
+@property (strong) NSString *endCommand;
+@property (strong) NSSet *keywords;
+@property (strong) NSSet *autocompleteWords;
+@property (strong) NSArray *keywordsAndAutocompleteWords;
+@property (strong) NSString *beginInstruction;
+@property (strong) NSString *endInstruction;
+@property (strong) NSCharacterSet *beginVariable;
+@property (strong) NSCharacterSet *endVariable;
+@property (strong) NSString *firstSingleLineComment;
+@property (strong) NSString *secondSingleLineComment;
+@property (strong) NSMutableArray *singleLineComments;
+@property (strong) NSMutableArray *multiLineComments;
+@property (strong) NSString *beginFirstMultiLineComment;
+@property (strong) NSString*endFirstMultiLineComment;
+@property (strong) NSString*beginSecondMultiLineComment;
+@property (strong) NSString*endSecondMultiLineComment;
+@property (strong) NSCharacterSet *keywordStartCharacterSet;
+@property (strong) NSCharacterSet *keywordEndCharacterSet;
+@property (strong) NSCharacterSet *attributesCharacterSet;
+@property (strong) NSCharacterSet *letterCharacterSet;
 
 - (void)parseSyntaxDictionary:(NSDictionary *)syntaxDictionary;
 - (void)applySyntaxDefinition;
@@ -123,21 +123,21 @@ Unless required by applicable law or agreed to in writing, software distributed 
 		self.letterCharacterSet = [NSCharacterSet letterCharacterSet];
 		
 		// keyword start character set
-		NSMutableCharacterSet *temporaryCharacterSet = [[[NSCharacterSet letterCharacterSet] mutableCopy] autorelease];
+		NSMutableCharacterSet *temporaryCharacterSet = [[NSCharacterSet letterCharacterSet] mutableCopy];
 		[temporaryCharacterSet addCharactersInString:@"_:@#"];
-		self.keywordStartCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.keywordStartCharacterSet = [temporaryCharacterSet copy];
 		
 		// keyword end character set
-		temporaryCharacterSet = [[[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy] autorelease];
+		temporaryCharacterSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
 		[temporaryCharacterSet formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
 		[temporaryCharacterSet formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
 		[temporaryCharacterSet removeCharactersInString:@"_"];
-		self.keywordEndCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.keywordEndCharacterSet = [temporaryCharacterSet copy];
 		
 		// attributes character set
-		temporaryCharacterSet = [[[NSCharacterSet alphanumericCharacterSet] mutableCopy] autorelease];
+		temporaryCharacterSet = [[NSCharacterSet alphanumericCharacterSet] mutableCopy];
 		[temporaryCharacterSet addCharactersInString:@" -"]; // If there are two spaces before an attribute
-		self.attributesCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.attributesCharacterSet = [temporaryCharacterSet copy];
 		
 		// configure syntax definition
 		[self applySyntaxDefinition];
@@ -189,7 +189,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
  */
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([(NSString *)context isEqualToString:@"ColoursChanged"]) {
+	if ([(__bridge NSString *)context isEqualToString:@"ColoursChanged"]) {
 		[self applyColourDefaults];
 		[self pageRecolour];
 		if ([[SMLDefaults valueForKey:MGSFragariaPrefsHighlightCurrentLine] boolValue] == YES) {
@@ -199,10 +199,10 @@ Unless required by applicable law or agreed to in writing, software distributed 
 		} else {
 			[self highlightLineRange:NSMakeRange(0, 0)];
 		}
-	} else if ([(NSString *)context isEqualToString:@"MultiLineChanged"]) {
+	} else if ([(__bridge NSString *)context isEqualToString:@"MultiLineChanged"]) {
 		[self prepareRegularExpressions];
 		[self pageRecolour];
-	} else if ([(NSString *)context isEqualToString:@"syntaxDefinition"]) {
+	} else if ([(__bridge NSString *)context isEqualToString:@"syntaxDefinition"]) {
 		[self applySyntaxDefinition];
 		[self removeAllColours];
 		[self pageRecolour];
@@ -293,12 +293,12 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	
 	// If the plist file is malformed be sure to set the values to something
 	if ([syntaxDictionary valueForKey:@"keywords"]) {
-		self.keywords = [[[NSSet alloc] initWithArray:[syntaxDictionary valueForKey:@"keywords"]] autorelease];
+		self.keywords = [[NSSet alloc] initWithArray:[syntaxDictionary valueForKey:@"keywords"]];
 		[keywordsAndAutocompleteWordsTemporary addObjectsFromArray:[syntaxDictionary valueForKey:@"keywords"]];
 	}
 	
 	if ([syntaxDictionary valueForKey:@"autocompleteWords"]) {
-		self.autocompleteWords = [[[NSSet alloc] initWithArray:[syntaxDictionary valueForKey:@"autocompleteWords"]] autorelease];
+		self.autocompleteWords = [[NSSet alloc] initWithArray:[syntaxDictionary valueForKey:@"autocompleteWords"]];
 		[keywordsAndAutocompleteWordsTemporary addObjectsFromArray:[syntaxDictionary valueForKey:@"autocompleteWords"]];
 	}
 	
@@ -317,12 +317,12 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	}
 	
 	if (keywordsCaseSensitive == NO) {
-		NSMutableArray *lowerCaseKeywords = [[[NSMutableArray alloc] init] autorelease];
+		NSMutableArray *lowerCaseKeywords = [[NSMutableArray alloc] init];
 		for (id item in keywords) {
 			[lowerCaseKeywords addObject:[item lowercaseString]];
 		}
 		
-		NSSet *lowerCaseKeywordsSet = [[[NSSet alloc] initWithArray:lowerCaseKeywords] autorelease];
+		NSSet *lowerCaseKeywordsSet = [[NSSet alloc] initWithArray:lowerCaseKeywords];
 		self.keywords = lowerCaseKeywordsSet;
 	}
 	
@@ -412,7 +412,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	}
 
     self.multiLineComments = [NSMutableArray arrayWithCapacity:2];
-	[self.multiLineComments addObject:[NSArray arrayWithObjects:self.beginFirstMultiLineComment, self.endFirstMultiLineComment, nil]];
+	[self.multiLineComments addObject:@[self.beginFirstMultiLineComment, self.endFirstMultiLineComment]];
 	
 	if ([syntaxDictionary valueForKey:@"beginSecondMultiLineComment"]) {
 		self.beginSecondMultiLineComment = [syntaxDictionary valueForKey:@"beginSecondMultiLineComment"];
@@ -425,7 +425,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	} else {
 		self.endSecondMultiLineComment = @"";
 	}
-	[self.multiLineComments addObject:[NSArray arrayWithObjects:self.beginSecondMultiLineComment, self.endSecondMultiLineComment, nil]];
+	[self.multiLineComments addObject:@[self.beginSecondMultiLineComment, self.endSecondMultiLineComment]];
 
 	
 	if ([syntaxDictionary valueForKey:@"functionDefinition"]) {
@@ -441,27 +441,27 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	}
 	
 	if ([syntaxDictionary valueForKey:@"excludeFromKeywordStartCharacterSet"]) {
-		NSMutableCharacterSet *temporaryCharacterSet = [[keywordStartCharacterSet mutableCopy] autorelease];
+		NSMutableCharacterSet *temporaryCharacterSet = [keywordStartCharacterSet mutableCopy];
 		[temporaryCharacterSet removeCharactersInString:[syntaxDictionary valueForKey:@"excludeFromKeywordStartCharacterSet"]];
-		self.keywordStartCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.keywordStartCharacterSet = [temporaryCharacterSet copy];
 	}
 	
 	if ([syntaxDictionary valueForKey:@"excludeFromKeywordEndCharacterSet"]) {
-		NSMutableCharacterSet *temporaryCharacterSet = [[keywordEndCharacterSet mutableCopy] autorelease];
+		NSMutableCharacterSet *temporaryCharacterSet = [keywordEndCharacterSet mutableCopy];
 		[temporaryCharacterSet removeCharactersInString:[syntaxDictionary valueForKey:@"excludeFromKeywordEndCharacterSet"]];
-		self.keywordEndCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.keywordEndCharacterSet = [temporaryCharacterSet copy];
 	}
 	
 	if ([syntaxDictionary valueForKey:@"includeInKeywordStartCharacterSet"]) {
-		NSMutableCharacterSet *temporaryCharacterSet = [[keywordStartCharacterSet mutableCopy] autorelease];
+		NSMutableCharacterSet *temporaryCharacterSet = [keywordStartCharacterSet mutableCopy];
 		[temporaryCharacterSet addCharactersInString:[syntaxDictionary valueForKey:@"includeInKeywordStartCharacterSet"]];
-		self.keywordStartCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.keywordStartCharacterSet = [temporaryCharacterSet copy];
 	}
 	
 	if ([syntaxDictionary valueForKey:@"includeInKeywordEndCharacterSet"]) {
-		NSMutableCharacterSet *temporaryCharacterSet = [[keywordEndCharacterSet mutableCopy] autorelease];
+		NSMutableCharacterSet *temporaryCharacterSet = [keywordEndCharacterSet mutableCopy];
 		[temporaryCharacterSet addCharactersInString:[syntaxDictionary valueForKey:@"includeInKeywordEndCharacterSet"]];
-		self.keywordEndCharacterSet = [[temporaryCharacterSet copy] autorelease];
+		self.keywordEndCharacterSet = [temporaryCharacterSet copy];
 	}
 
 	[self prepareRegularExpressions];
@@ -609,7 +609,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	}
 	
 	// colourAll option
-	NSNumber *colourAll = [options objectForKey:@"colourAll"];
+	NSNumber *colourAll = options[@"colourAll"];
 	if (!colourAll || ![colourAll boolValue]) {
 		[self pageRecolourTextView:textView];
 		return;
@@ -656,9 +656,9 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	if (searchStringLength == 0) {
 		return;
 	}
-	NSScanner *scanner = [[[NSScanner alloc] initWithString:searchString] autorelease];
+	NSScanner *scanner = [[NSScanner alloc] initWithString:searchString];
 	[scanner setCharactersToBeSkipped:nil];
-	NSScanner *completeDocumentScanner = [[[NSScanner alloc] initWithString:completeString] autorelease];
+	NSScanner *completeDocumentScanner = [[NSScanner alloc] initWithString:completeString];
 	[completeDocumentScanner setCharactersToBeSkipped:nil];
 	
 	NSUInteger completeStringLength = [completeString length];
@@ -1000,8 +1000,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
         //
         for (NSArray *multiLineComment in self.multiLineComments) {
             
-            NSString *beginMultiLineComment = [multiLineComment objectAtIndex:0];
-            NSString *endMultiLineComment = [multiLineComment objectAtIndex:1];
+            NSString *beginMultiLineComment = multiLineComment[0];
+            NSString *endMultiLineComment = multiLineComment[1];
             
             if (![beginMultiLineComment isEqualToString:@""] && [[SMLDefaults valueForKey:MGSFragariaPrefsColourComments] boolValue] == YES) {
             
@@ -1107,23 +1107,23 @@ Unless required by applicable law or agreed to in writing, software distributed 
  */
 - (void)applyColourDefaults
 {
-	commandsColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsCommandsColourWell]], NSForegroundColorAttributeName, nil];
+	commandsColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsCommandsColourWell]]};
 	
-	commentsColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsCommentsColourWell]], NSForegroundColorAttributeName, nil];
+	commentsColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsCommentsColourWell]]};
 	
-	instructionsColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsInstructionsColourWell]], NSForegroundColorAttributeName, nil];
+	instructionsColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsInstructionsColourWell]]};
 	
-	keywordsColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsKeywordsColourWell]], NSForegroundColorAttributeName, nil];
+	keywordsColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsKeywordsColourWell]]};
 	
-	autocompleteWordsColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsAutocompleteColourWell]], NSForegroundColorAttributeName, nil];
+	autocompleteWordsColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsAutocompleteColourWell]]};
 	
-	stringsColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsStringsColourWell]], NSForegroundColorAttributeName, nil];
+	stringsColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsStringsColourWell]]};
 	
-	variablesColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsVariablesColourWell]], NSForegroundColorAttributeName, nil];
+	variablesColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsVariablesColourWell]]};
 	
-	attributesColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsAttributesColourWell]], NSForegroundColorAttributeName, nil];
+	attributesColour = @{NSForegroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsAttributesColourWell]]};
 	
-	lineHighlightColour = [[NSDictionary alloc] initWithObjectsAndKeys:[NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsHighlightLineColourWell]], NSBackgroundColorAttributeName, nil];
+	lineHighlightColour = @{NSBackgroundColorAttributeName: [NSUnarchiver unarchiveObjectWithData:[SMLDefaults valueForKey:MGSFragariaPrefsHighlightLineColourWell]]};
 }
 
 /*
@@ -1188,7 +1188,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	SMLTextView *textView = (SMLTextView *)[notification object];
 	
 	if ([[document valueForKey:MGSFOIsEdited] boolValue] == NO) {
-		[document setValue:[NSNumber numberWithBool:YES] forKey:MGSFOIsEdited];
+		[document setValue:@YES forKey:MGSFOIsEdited];
 	}
 	
 	if ([[SMLDefaults valueForKey:MGSFragariaPrefsHighlightCurrentLine] boolValue] == YES) {
@@ -1405,7 +1405,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 #pragma unused(idx)
 	if ([self.keywordsAndAutocompleteWords count] == 0) {
 		if ([[SMLDefaults valueForKey:MGSFragariaPrefsAutocompleteIncludeStandardWords] boolValue] == NO) {
-			return [NSArray array];
+			return @[];
 		} else {
 			return words;
 		}
@@ -1461,7 +1461,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	if (![theUndoManager canUndo]) {
 		
 		// we can undo no more so we must be restored to unedited state
-		[document setValue:[NSNumber numberWithBool:NO] forKey:MGSFOIsEdited];
+		[document setValue:@NO forKey:MGSFOIsEdited];
 		
 		//should data be reloaded?
 	}
